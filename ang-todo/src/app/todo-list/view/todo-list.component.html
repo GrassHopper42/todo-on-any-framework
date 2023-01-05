@@ -21,22 +21,16 @@
   <div class="todo-list-box-container">
     <ul>
       <li *ngFor="let item of getTodoList()">
-        <div (click)="updateState(item.id, item.state)">{{ item.content }}</div>
+        <div (click)="switchState(item.id)">{{ item.content }}</div>
         <div class="todo-box-right">
-          <div *ngIf="item.state === 'Done'; then done; else none"></div>
+          <div *ngIf="item.isDone(); then done; else none"></div>
           <ng-template #done>
-            <span
-              class="material-icons done"
-              (click)="updateState(item.id, item.state)"
-            >
+            <span class="material-icons done" (click)="switchState(item.id)">
               done
             </span>
           </ng-template>
           <ng-template #none>
-            <span
-              class="material-icons none"
-              (click)="updateState(item.id, item.state)"
-            >
+            <span class="material-icons none" (click)="switchState(item.id)">
               panorama_fish_eye
             </span>
           </ng-template>

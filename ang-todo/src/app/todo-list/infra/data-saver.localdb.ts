@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import TodoMapper from './TodoMapper';
 import { Todo } from '../models/todos';
 import { TodoDataSaver } from './data-saver.interface';
 
@@ -18,10 +19,10 @@ export class LocalTodoDataSaver implements TodoDataSaver {
     }
   }
 
-  findAllTodos(): Todo[] {
-    return JSON.parse(
-      localStorage.getItem(this.LOCAL_DB_KEY) || '[]'
-    ) as Todo[];
+  findAllTodos(): any[] {
+    return JSON.parse(localStorage.getItem(this.LOCAL_DB_KEY) || '[]').map(
+      (json: any) => TodoMapper.toModel(json)
+    );
   }
 
   update(id: number, todo: Todo): void {

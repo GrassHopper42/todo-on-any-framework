@@ -1,16 +1,19 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { TodoState, Todo } from '../models/todos';
-import { TodosService } from '../services/todos.service';
-import { TODO_DATA_SAVER } from '../data-saver/data-saver.interface';
-import { LocalTodoDataSaver } from '../data-saver/data-saver.localdb';
+import { Todo } from './models/todos';
+import { TodoService } from './services/todos.service';
+import { TODO_DATA_SAVER } from './infra/data-saver.interface';
+import { LocalTodoDataSaver } from './infra/data-saver.localdb';
 
 @Component({
   selector: 'app-todo-list',
-  templateUrl: './todo-list.component.html',
-  styleUrls: ['./todo-list.component.css'],
+  templateUrl: './view/todo-list.component.html',
+  styleUrls: ['./view/todo-list.component.css'],
   providers: [
-    TodosService,
+    {
+      provide: TodoService,
+      useClass: TodoService,
+    },
     {
       provide: TODO_DATA_SAVER,
       useClass: LocalTodoDataSaver,
@@ -20,7 +23,7 @@ import { LocalTodoDataSaver } from '../data-saver/data-saver.localdb';
 export class TodoListComponent {
   newTodo = new FormControl('');
 
-  constructor(private todoService: TodosService) {}
+  constructor(private todoService: TodoService) {}
 
   getTodoList(): Todo[] {
     return this.todoService.getAllTodos();
@@ -29,17 +32,15 @@ export class TodoListComponent {
   addTodo(e: any): void {
     e.preventDefault();
     if (!this.newTodo.value) return;
-    this.todoService.add(this.newTodo.value);
+    this.todoService.addTodo(this.newTodo.value);
     this.newTodo.setValue('');
   }
 
   delTodo(id: number) {
-    this.todoService.delete(id);
+    this.todoService.deleteTodo(id);
   }
 
-  updateState(id: number, nowState: string) {
-    if (nowState === TodoState.NORMAL)
-      this.todoService.updateState(id, TodoState.DONE);
-    else this.todoService.updateState(id, TodoState.NORMAL);
+  switchState(id: number) {
+    this.todoService.updateState(id);
   }
 }
