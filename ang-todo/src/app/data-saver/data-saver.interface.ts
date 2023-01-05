@@ -1,8 +1,13 @@
-import { TodoState, TodoType } from '../models/todos';
+import { InjectionToken } from '@angular/core';
+import { Todo } from '../models/todos';
 
-export interface iTodoDataSaver {
-  add(data: string): void;
-  allTodos: TodoType[];
-  updateTodoState(id: number, toState: TodoState): void;
+export const TODO_DATA_SAVER = new InjectionToken<TodoDataSaver>(
+  'TodoDataSaver'
+);
+
+export interface TodoDataSaver {
+  save(todo: Todo[]): void;
+  findAllTodos(): Todo[];
+  update(id: number, todo: Todo): void;
   delete(id: number): void;
 }

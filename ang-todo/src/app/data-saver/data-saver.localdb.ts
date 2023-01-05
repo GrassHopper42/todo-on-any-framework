@@ -1,59 +1,39 @@
 import { Injectable } from '@angular/core';
-import { TodoState, TodoType } from '../models/todos';
-import { DBSaver } from './data-saver';
+import { Todo } from '../models/todos';
+import { TodoDataSaver } from './data-saver.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LocalDBSaver implements DBSaver {
-  private localDBKey = 'todoData';
+export class LocalTodoDataSaver implements TodoDataSaver {
+  private LOCAL_DB_KEY = 'todos';
+
   constructor() {}
 
-  todoObjBuilder(todo: string) {
-    return {
-      todo: todo,
-      state: TodoState.NORMAL,
-      id: Date.now(),
-    };
-  }
-
-  localDBSaver(todosObjData: TodoType[]) {
+  save(todos: Todo[]): void {
     try {
-      localStorage.setItem(this.localDBKey, JSON.stringify(todosObjData));
+      localStorage.setItem(this.LOCAL_DB_KEY, JSON.stringify(todos));
     } catch (e) {
       console.log('LocalDBSaver save 에러');
     }
   }
 
-  get allTodos() {
-    const localData = JSON.parse(
-      localStorage.getItem(this.localDBKey) || '[]'
-    ) as TodoType[];
-    return localData;
+  findAllTodos(): Todo[] {
+    return JSON.parse(
+      localStorage.getItem(this.LOCAL_DB_KEY) || '[]'
+    ) as Todo[];
   }
 
-  add(todo: string) {
-    const todoObj = this.todoObjBuilder(todo);
-    const prevTodos = this.allTodos || [];
-    let todoObjData;
-    if (prevTodos.length === 0) {
-      todoObjData = new Array(todoObj);
-    } else {
-      todoObjData = prevTodos.concat(todoObj);
-    }
-    this.localDBSaver(todoObjData);
-  }
-
-  updateTodoState(id: number, toState: TodoState) {
-    const allTodos = this.allTodos;
+  update(id: number, todo: Todo): void {
+    const allTodos = this.findAllTodos();
     const todoIdx = allTodos.findIndex((todo) => todo.id === id);
-    allTodos[todoIdx].state = toState;
-    this.localDBSaver(allTodos);
+    allTodos[todoIdx] = todo;
+    this.save(allTodos);
   }
 
-  delete(id: number) {
-    const allTodos = this.allTodos;
+  delete(id: number): void {
+    const allTodos = this.findAllTodos();
     const filteredTodos = allTodos.filter((todo) => todo.id !== id);
-    this.localDBSaver(filteredTodos);
+    this.save(filteredTodos);
   }
 }

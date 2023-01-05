@@ -4,8 +4,8 @@ export enum TodoState {
   NORMAL = 'Normal',
 }
 
-export interface TodoType {
+export type Todo = {
   id: number;
-  todo: string;
+  content: string;
   state: string;
-}
+};

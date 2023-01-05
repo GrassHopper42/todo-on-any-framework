@@ -20,8 +20,8 @@
 
   <div class="todo-list-box-container">
     <ul>
-      <li *ngFor="let item of db.allTodos">
-        <div (click)="updateState(item.id, item.state)">{{ item.todo }}</div>
+      <li *ngFor="let item of getTodoList()">
+        <div (click)="updateState(item.id, item.state)">{{ item.content }}</div>
         <div class="todo-box-right">
           <div *ngIf="item.state === 'Done'; then done; else none"></div>
           <ng-template #done>
